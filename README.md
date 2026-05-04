@@ -1,65 +1,91 @@
-# AI Code Review Assistant (LangChain + OpenAPI)
+# AI Code Review Assistant (LangChain + OpenAI API)
 
-This project is a starter implementation of an **AI code review assistant** built with:
+This project is an **AI code review assistant** that reviews git diffs and outputs structured markdown feedback.
 
-- **LangChain** for orchestration
-- **OpenAI API** ("OpenAPI" likely intended as OpenAI API)
-- **Git diff ingestion** to review changed files
+## What it does
 
-## Features
-
-- Reads a git diff from stdin or a file
-- Uses a structured review prompt to produce:
-  - Summary of changes
-  - Potential bugs / risks
+- Reads a git diff from `stdin` or a diff file
+- Uses LangChain + OpenAI chat model for review
+- Produces consistent sections:
+  - High-level summary
+  - Bugs/logic risks
   - Security concerns
   - Performance concerns
-  - Actionable suggestions
-- Outputs markdown for easy posting to PR comments
+  - Maintainability suggestions
+  - Next actions
 
-## Quickstart
+## Install
 
-1. Create and activate a virtual environment:
+### Option A: local editable install (recommended)
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+pip install -e .
 ```
 
-2. Install dependencies:
+### Option B: dependencies only
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Set your API key:
+## CLI usage
+
+Set API key first:
 
 ```bash
 export OPENAI_API_KEY="your_api_key"
 ```
 
-4. Run against current staged diff:
+Review staged changes:
 
 ```bash
-git diff --staged | python -m src.main
+git diff --staged | ai-code-review
 ```
 
-5. Or review a diff file:
+Review a diff file:
 
 ```bash
-python -m src.main --diff-file sample.diff
+ai-code-review --diff-file sample.diff
 ```
 
-## Project Structure
+Use another model:
 
-- `src/main.py` - CLI entrypoint
-- `src/reviewer.py` - LangChain review chain
-- `src/prompts.py` - Prompt template
+```bash
+ai-code-review --model gpt-4o
+```
 
-## Notes
+## Use as a Python package in another repository
 
-- This is intentionally simple and can be extended with:
-  - Repository-aware context retrieval
-  - Severity scoring
-  - Auto-fix suggestions
-  - PR platform integration (GitHub/GitLab)
+Yes. You can import and use it directly.
+
+### 1) Install from this repo path
+
+```bash
+pip install "git+https://<your-git-host>/<org>/aicodereview.git"
+```
+
+_or for local path during development:_
+
+```bash
+pip install -e /path/to/aicodereview
+```
+
+### 2) Call from Python
+
+```python
+from ai_code_reviewer import review_diff
+
+diff_text = """diff --git a/app.py b/app.py
++print('hello')
+"""
+
+report = review_diff(diff_text, model="gpt-4o-mini")
+print(report)
+```
+
+## Developer notes
+
+Main package files:
+- `ai_code_reviewer/cli.py`
+- `ai_code_reviewer/reviewer.py`
+- `ai_code_reviewer/prompts.py`
