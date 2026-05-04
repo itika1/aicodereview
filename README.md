@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ## CLI usage
 
-Set API key first:
+Set API key first (this is read at runtime by `ai_code_reviewer.cli` and used by `ChatOpenAI` in `ai_code_reviewer.reviewer`):
 
 ```bash
 export OPENAI_API_KEY="your_api_key"

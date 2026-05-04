@@ -6,6 +6,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from .config import require_openai_api_key
 from .reviewer import review_diff
 
 
@@ -35,6 +36,7 @@ def read_diff(diff_file: Path | None) -> str:
 def main() -> None:
     load_dotenv()
     args = parse_args()
+    require_openai_api_key()
 
     diff_text = read_diff(args.diff_file)
     if not diff_text.strip():
